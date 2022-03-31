@@ -38,7 +38,7 @@ searchEl.addEventListener("click", formSubmitCity);
 
 var apiResponse = function (lat,lon,city) {
 
-    var apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=daily&appid=${apiKey}&units=imperial`
+    var apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&appid=${apiKey}&units=imperial`
 
   
     fetch(apiUrl)
@@ -48,14 +48,24 @@ var apiResponse = function (lat,lon,city) {
           response.json().then(function (data) {
             console.log(data);
             document.getElementById("city-name").innerText=city
-            document.getElementById("temperature").innerText=data.current.temp
-            document.getElementById("humidity").innerText=data.current.humidity
-            document.getElementById("wind-speed").innerText=data.current.wind_speed
-            document.getElementById("UV-index").innerText=data.current.uvi
+            document.getElementById("temperature").innerText="Temperature : " + data.current.temp
+            document.getElementById("humidity").innerText="Humidity:" + data.current.humidity
+            document.getElementById("wind-speed").innerText="Wind_speed: " + data.current.wind_speed
+            document.getElementById("UV-index").innerText="UVI:" + data.current.uvi
             document.getElementById("current-pic").setAttribute("src",` https://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png`)
+            let forecastHTML =""
+            for (let i = 0; i < 5;i++){
+                forecastHTML += `<div class="col forecast bg-primary text-white ml-3 mb-3 rounded">
+                <p>Temperature: ${data.daily[i].temp.day}</p>
+                <p>Humidity: ${data.daily[i].humidity}</p>
+                <p>Wind_speed: ${data.daily[i].wind_speed}</p>
+                <img src="https://openweathermap.org/img/wn/${data.daily[i].weather[0].icon}@2x.png" />
+                </div>`
 
+            }
 
-        
+    document.getElementById("five-days").innerHTML = forecastHTML
+
             // displayRepos(data, user);
           });
         } else {
